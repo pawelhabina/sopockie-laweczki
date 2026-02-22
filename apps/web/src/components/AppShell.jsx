@@ -1,17 +1,20 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleUser, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { BottomNav } from './BottomNav';
 
 export function AppShell() {
   const location = useLocation();
 
   return (
-    <div className="page-shell flex flex-col gap-4">
+    <div className="page-shell flex flex-col gap-8">
       <header className="panel sticky top-3 z-20 flex items-center justify-between p-3 backdrop-blur">
         <Link
           to="/w-budowie/profile"
-          className="rounded-xl border border-[var(--outline-soft)] px-4 py-2 text-sm font-semibold"
+          aria-label="Profil"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-lg text-[var(--text-muted)] transition hover:scale-105"
         >
-          Profil
+          <FontAwesomeIcon icon={faCircleUser} />
         </Link>
 
         <div className="text-center">
@@ -21,9 +24,10 @@ export function AppShell() {
 
         <Link
           to="/w-budowie/sos"
-          className="rounded-xl bg-accent px-4 py-2 text-sm font-extrabold text-white"
+          aria-label="SOS"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg text-white transition hover:scale-105"
         >
-          SOS
+          <FontAwesomeIcon icon={faTriangleExclamation} />
         </Link>
       </header>
 

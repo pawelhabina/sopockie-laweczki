@@ -1,24 +1,29 @@
 import { Link } from 'react-router-dom';
 import { useUiPrefs } from '@/context/UiPrefsContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCouch, faUsers, faRoute } from '@fortawesome/free-solid-svg-icons';
 
-const homeTiles = [
+const mainTile = {
+  title: 'Ławeczki',
+  description: 'Mapa i lista ławek w Sopocie.',
+  to: '/benches',
+  icon: faCouch,
+};
+
+const secondaryTiles = [
   {
     title: 'Spotkania',
     description: 'Dołącz lub utwórz spotkanie na ławce.',
     to: '/meetings',
     bgClass: 'from-[#1c5d73] to-[#2a7f87]',
+    icon: faUsers,
   },
   {
     title: 'Trasy',
     description: 'Zobacz trasy oficjalne i społeczności.',
     to: '/routes',
-    bgClass: 'from-[#f59f00] to-[#ff7d00]',
-  },
-  {
-    title: 'Ławeczki',
-    description: 'Mapa i lista ławek w Sopocie.',
-    to: '/benches',
-    bgClass: 'from-[#4d908e] to-[#577590]',
+    bgClass: 'from-[#22577a] to-[#2c7da0]',
+    icon: faRoute,
   },
 ];
 
@@ -26,25 +31,37 @@ export function HomePage() {
   const { fontScale, highContrast, setFontScale, toggleContrast } = useUiPrefs();
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="panel p-4">
-        <h1 className="font-heading text-2xl leading-tight">Menu główne</h1>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">
-          aplikacja dla mieszkańców sopotu
-        </p>
-      </div>
+    <section className="flex flex-col gap-8">
 
       <div className="grid gap-3">
-        {homeTiles.map((tile) => (
-          <Link
-            key={tile.title}
-            to={tile.to}
-            className={`rounded-2xl bg-gradient-to-br ${tile.bgClass} p-5 text-white shadow-card transition hover:scale-[1.01] focus-visible:scale-[1.01]`}
-          >
-            <p className="font-heading text-2xl">{tile.title}</p>
-            <p className="mt-2 max-w-[26ch] text-sm opacity-95">{tile.description}</p>
-          </Link>
-        ))}
+        <Link
+          to={mainTile.to}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#f6c453] to-[#f59f00] p-6 pr-24 text-[#1a2a33] shadow-card transition hover:scale-[1.01] focus-visible:scale-[1.01]"
+        >
+          <FontAwesomeIcon
+            icon={mainTile.icon}
+            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-8xl text-black/20"
+          />
+          <p className="font-heading text-3xl">{mainTile.title}</p>
+          <p className="mt-2 text-sm font-semibold opacity-95">{mainTile.description}</p>
+        </Link>
+
+        <div className="grid grid-cols-2 gap-3">
+          {secondaryTiles.map((tile) => (
+            <Link
+              key={tile.title}
+              to={tile.to}
+              className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${tile.bgClass} p-4 pr-14 text-white shadow-card transition hover:scale-[1.01] focus-visible:scale-[1.01]`}
+            >
+              <FontAwesomeIcon
+                icon={tile.icon}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-6xl text-black/25"
+              />
+              <p className="font-heading text-xl">{tile.title}</p>
+              <p className="mt-2 text-xs opacity-95">{tile.description}</p>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="panel p-4">
