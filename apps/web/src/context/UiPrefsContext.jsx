@@ -1,29 +1,20 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-type FontScale = 1 | 1.15 | 1.3;
-
-type UiPrefsContextType = {
-  fontScale: FontScale;
-  highContrast: boolean;
-  setFontScale: (value: FontScale) => void;
-  toggleContrast: () => void;
-};
-
-const UiPrefsContext = createContext<UiPrefsContextType | null>(null);
+const UiPrefsContext = createContext(null);
 
 const FONT_SCALE_KEY = 'ui-font-scale';
 const CONTRAST_KEY = 'ui-contrast';
 
-export function UiPrefsProvider({ children }: PropsWithChildren) {
-  const [fontScale, setFontScale] = useState<FontScale>(() => {
+export function UiPrefsProvider({ children }) {
+  const [fontScale, setFontScale] = useState(() => {
     const saved = window.localStorage.getItem(FONT_SCALE_KEY);
     if (saved === '1.15' || saved === '1.3') {
-      return Number(saved) as FontScale;
+      return Number(saved);
     }
     return 1;
   });
 
-  const [highContrast, setHighContrast] = useState<boolean>(() => {
+  const [highContrast, setHighContrast] = useState(() => {
     return window.localStorage.getItem(CONTRAST_KEY) === '1';
   });
 

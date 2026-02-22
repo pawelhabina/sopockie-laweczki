@@ -1,7 +1,5 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
-  content: ['./index.html', './src/**/*.{ts,tsx}'],
+const config = {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {

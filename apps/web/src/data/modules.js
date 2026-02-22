@@ -1,6 +1,4 @@
-import { Feature, ModuleId } from '@/types';
-
-export const moduleMenu: Record<ModuleId, Feature[]> = {
+export const moduleMenu = {
   routes: [
     {
       id: 'routes-official-list',
@@ -65,7 +63,7 @@ export const moduleMenu: Record<ModuleId, Feature[]> = {
 
 export const featureLookup = Object.values(moduleMenu)
   .flat()
-  .reduce<Record<string, Feature>>((acc, feature) => {
+  .reduce((acc, feature) => {
     acc[feature.id] = feature;
     return acc;
   }, {});

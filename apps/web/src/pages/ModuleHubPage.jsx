@@ -1,14 +1,7 @@
 import { Link } from 'react-router-dom';
 import { moduleMenu } from '@/data/modules';
-import { ModuleId } from '@/types';
 
-type ModuleHubPageProps = {
-  moduleId: ModuleId;
-  title: string;
-  subtitle: string;
-};
-
-export function ModuleHubPage({ moduleId, title, subtitle }: ModuleHubPageProps) {
+export function ModuleHubPage({ moduleId, title, subtitle }) {
   const features = moduleMenu[moduleId];
 
   return (

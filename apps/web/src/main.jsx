@@ -5,7 +5,7 @@ import App from './App';
 import './index.css';
 import { UiPrefsProvider } from './context/UiPrefsContext';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <UiPrefsProvider>
       <BrowserRouter>

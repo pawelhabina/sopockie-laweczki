@@ -1,22 +1,13 @@
 import { Link } from 'react-router-dom';
 
-type BottomNavProps = {
-  currentPath: string;
-};
-
-type NavItem = {
-  label: string;
-  to: string;
-};
-
-const navItems: NavItem[] = [
+const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Trasy', to: '/routes' },
   { label: 'Ławeczki', to: '/benches' },
   { label: 'Spotkania', to: '/meetings' },
 ];
 
-export function BottomNav({ currentPath }: BottomNavProps) {
+export function BottomNav({ currentPath }) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto max-w-[680px] border-t border-white/60 bg-white/90 px-3 pb-4 pt-2 backdrop-blur">
       <ul className="grid grid-cols-4 gap-2">

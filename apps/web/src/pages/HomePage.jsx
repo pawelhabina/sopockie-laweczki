@@ -62,7 +62,7 @@ export function HomePage() {
             <button
               key={scale}
               type="button"
-              onClick={() => setFontScale(scale as 1 | 1.15 | 1.3)}
+              onClick={() => setFontScale(scale)}
               className={`rounded-xl border px-3 py-2 text-sm font-semibold ${
                 fontScale === scale
                   ? 'cta-btn border-transparent'

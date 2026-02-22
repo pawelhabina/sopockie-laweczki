@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { featureLookup } from '@/data/modules';
 
-const staticLabels: Record<string, string> = {
+const staticLabels = {
   profile: 'Profil użytkownika',
   sos: 'SOS',
   settings: 'Ustawienia',
