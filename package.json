@@ -1,0 +1,14 @@
+{
+  "name": "sopockie-laweczki",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "preview": "npm run preview -w apps/web"
+  }
+}

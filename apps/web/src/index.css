@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-scale: 1;
+  --bg-main: #f2f7f4;
+  --bg-panel: rgba(255, 255, 255, 0.88);
+  --text-main: #13313f;
+  --text-muted: #3d5b67;
+  --outline-soft: rgba(15, 76, 92, 0.16);
+  --cta: #0f4c5c;
+  --cta-contrast: #ffffff;
+}
+
+:root[data-contrast='high'] {
+  --bg-main: #eff7f2;
+  --bg-panel: #ffffff;
+  --text-main: #081e26;
+  --text-muted: #173d4d;
+  --outline-soft: rgba(9, 45, 55, 0.35);
+  --cta: #092d37;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  font-size: calc(16px * var(--font-scale));
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(77, 144, 142, 0.16), transparent 42%),
+    radial-gradient(circle at 88% 12%, rgba(255, 125, 0, 0.12), transparent 38%),
+    var(--bg-main);
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  min-height: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem 1rem 5.5rem;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--outline-soft);
+  border-radius: 1.1rem;
+  box-shadow: 0 14px 40px -24px rgba(10, 34, 44, 0.55);
+}
+
+.cta-btn {
+  background: var(--cta);
+  color: var(--cta-contrast);
+}

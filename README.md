@@ -1,1 +1,0 @@
-# sopockie-laweczki
