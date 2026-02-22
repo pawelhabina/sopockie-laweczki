@@ -30,7 +30,7 @@ export function HomePage() {
       <div className="panel p-4">
         <h1 className="font-heading text-2xl leading-tight">Menu główne</h1>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
-          Każdy kafelek jest klikalny. Funkcje wewnątrz modułów są już podpięte i oznaczone jako W budowie.
+          aplikacja dla mieszkańców sopotu
         </p>
       </div>
 
@@ -48,7 +48,7 @@ export function HomePage() {
       </div>
 
       <div className="panel p-4">
-        <p className="mb-2 text-sm font-bold">Dostępność (MVP)</p>
+        <p className="mb-2 text-sm font-bold">Ustawienia</p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"

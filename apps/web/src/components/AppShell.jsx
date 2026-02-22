@@ -16,7 +16,7 @@ export function AppShell() {
 
         <div className="text-center">
           <p className="font-heading text-lg leading-none tracking-tight">Sopockie Ławeczki</p>
-          <p className="text-xs text-[var(--text-muted)]">Mobilnie i prosto</p>
+          <p className="text-xs text-[var(--text-muted)]">Sopot moje miasto</p>
         </div>
 
         <Link

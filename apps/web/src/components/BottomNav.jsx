@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Home', to: '/' },
-  { label: 'Trasy', to: '/routes' },
+  { label: 'Menu', to: '/' },
   { label: 'Ławeczki', to: '/benches' },
   { label: 'Spotkania', to: '/meetings' },
+  { label: 'Trasy', to: '/routes' },
 ];
 
 export function BottomNav({ currentPath }) {
