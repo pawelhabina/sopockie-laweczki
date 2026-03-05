@@ -7,7 +7,7 @@ export function ProfilePage() {
     <section className="flex min-h-[68vh] flex-col gap-4">
       <div className="panel p-5">
         <h1 className="font-heading text-2xl leading-tight">Profil</h1>
-        {/* <p className="mt-2 text-sm text-[var(--text-muted)]">Tu będą dane użytkownika i opcje konta.</p> */}
+        <p className="mt-2 text-sm text-[var(--text-muted)]">Tu będą dane użytkownika i opcje konta.</p>
       </div>
 
       <div className="panel p-5">
