@@ -10,7 +10,7 @@ export function AppShell() {
     <div className="page-shell flex flex-col gap-8">
       <header className="panel sticky top-3 z-20 flex items-center justify-between p-3 backdrop-blur">
         <Link
-          to="/w-budowie/profile"
+          to="/profile"
           aria-label="Profil"
           className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-lg text-[var(--text-muted)] transition hover:scale-105"
         >

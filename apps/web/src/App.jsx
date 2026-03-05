@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { HomePage } from './pages/HomePage';
+import { ProfilePage } from './pages/ProfilePage';
 import { ModuleHubPage } from './pages/ModuleHubPage';
 import { UnderConstructionPage } from './pages/UnderConstructionPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -27,6 +28,9 @@ function App() {
         <Route path="/spotkania" element={<Navigate to="/meetings" replace />} />
         <Route path="/w-budowie/:featureId" element={<UnderConstructionPage />} />
         <Route path="/ustawienia" element={<Navigate to="/w-budowie/settings" replace />} />
+      </Route>
+      <Route path="/profile" element={<AppShell />}>
+        <Route index element={<ProfilePage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
