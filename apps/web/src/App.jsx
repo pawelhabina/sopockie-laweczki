@@ -5,6 +5,9 @@ import { ProfilePage } from './pages/ProfilePage';
 import { ModuleHubPage } from './pages/ModuleHubPage';
 import { UnderConstructionPage } from './pages/UnderConstructionPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { BenchesMapPage } from './pages/BenchesMapPage';
+import { BenchesListPage } from './pages/BenchesListPage';
+import { BenchDetailsPage } from './pages/BenchDetailsPage';
 
 function App() {
   return (
@@ -15,10 +18,9 @@ function App() {
           path="/routes"
           element={<ModuleHubPage moduleId="routes" title="Trasy" subtitle="Wybierz, co chcesz zrobić" />}
         />
-        <Route
-          path="/benches"
-          element={<ModuleHubPage moduleId="benches" title="Ławeczki" subtitle="Wybierz funkcję" />}
-        />
+        <Route path="/benches" element={<BenchesMapPage />} />
+        <Route path="/benches/list" element={<BenchesListPage />} />
+        <Route path="/benches/details" element={<BenchDetailsPage />} />
         <Route
           path="/meetings"
           element={<ModuleHubPage moduleId="meetings" title="Spotkania" subtitle="Wybierz funkcję" />}

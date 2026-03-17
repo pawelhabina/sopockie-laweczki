@@ -1,3 +1,5 @@
+import { faCouch, faRoute, faUsers } from '@fortawesome/free-solid-svg-icons';
+
 export const moduleMenu = {
   routes: [
     {
@@ -63,6 +65,7 @@ export const moduleMenu = {
 
 export const moduleTheme = {
   benches: {
+    icon: faCouch,
     bgClass: 'from-[#f6c453] to-[#f59f00]',
     textClass: 'text-[#1a2a33]',
     iconClass: 'text-black/20',
@@ -72,6 +75,7 @@ export const moduleTheme = {
     chipClass: 'border-[#ba8a2f]/35 bg-white/70 text-[#5f4300]',
   },
   meetings: {
+    icon: faUsers,
     bgClass: 'from-[#1c5d73] to-[#2a7f87]',
     textClass: 'text-white',
     iconClass: 'text-black/25',
@@ -81,6 +85,7 @@ export const moduleTheme = {
     chipClass: 'border-[#3b7084]/35 bg-white/75 text-[#2d6072]',
   },
   routes: {
+    icon: faRoute,
     bgClass: 'from-[#22577a] to-[#2c7da0]',
     textClass: 'text-white',
     iconClass: 'text-black/25',

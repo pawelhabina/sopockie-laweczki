@@ -66,3 +66,18 @@ a {
   background: var(--cta);
   color: var(--cta-contrast);
 }
+
+.bench-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 1rem;
+  background: transparent;
+  box-shadow: 0 14px 40px -24px rgba(10, 34, 44, 0.55);
+}
+
+.bench-popup .leaflet-popup-content {
+  margin: 0;
+}
+
+.bench-popup .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95);
+}

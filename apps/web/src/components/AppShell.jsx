@@ -5,33 +5,36 @@ import { BottomNav } from './BottomNav';
 
 export function AppShell() {
   const location = useLocation();
+  const isBenchesMapPage = location.pathname === '/benches';
 
   return (
-    <div className="page-shell flex flex-col gap-8">
-      <header className="panel sticky top-3 z-20 flex items-center justify-between p-3 backdrop-blur">
-        <Link
-          to="/profile"
-          aria-label="Profil"
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-lg text-[var(--text-muted)] transition hover:scale-105"
-        >
-          <FontAwesomeIcon icon={faCircleUser} />
-        </Link>
+    <div className={`page-shell flex flex-col ${isBenchesMapPage ? 'gap-3 pt-3' : 'gap-8'}`}>
+      {!isBenchesMapPage && (
+        <header className="panel sticky top-3 z-20 flex items-center justify-between p-3 backdrop-blur">
+          <Link
+            to="/profile"
+            aria-label="Profil"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-lg text-[var(--text-muted)] transition hover:scale-105"
+          >
+            <FontAwesomeIcon icon={faCircleUser} />
+          </Link>
 
-        <div className="text-center">
-          <p className="font-heading text-lg leading-none tracking-tight">Sopockie Ławeczki</p>
-          <p className="text-xs text-[var(--text-muted)]">Sopot moje miasto</p>
-        </div>
+          <div className="text-center">
+            <p className="font-heading text-lg leading-none tracking-tight">Sopockie Ławeczki</p>
+            <p className="text-xs text-[var(--text-muted)]">Sopot moje miasto</p>
+          </div>
 
-        <Link
-          to="/w-budowie/sos"
-          aria-label="SOS"
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg text-white transition hover:scale-105"
-        >
-          <FontAwesomeIcon icon={faTriangleExclamation} />
-        </Link>
-      </header>
+          <Link
+            to="/w-budowie/sos"
+            aria-label="SOS"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg text-white transition hover:scale-105"
+          >
+            <FontAwesomeIcon icon={faTriangleExclamation} />
+          </Link>
+        </header>
+      )}
 
-      <main className="animate-riseIn pb-2">
+      <main className={`animate-riseIn ${isBenchesMapPage ? 'pb-0' : 'pb-2'}`}>
         <Outlet />
       </main>
 
