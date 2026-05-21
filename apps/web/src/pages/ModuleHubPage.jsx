@@ -23,7 +23,7 @@ export function ModuleHubPage({ moduleId, title, subtitle }) {
         {features.map((feature) => (
           <Link
             key={feature.id}
-            to={`/w-budowie/${feature.id}`}
+            to={feature.to ?? `/w-budowie/${feature.id}`}
             className={`flex items-center justify-between gap-3 rounded-2xl border p-4 shadow-card transition hover:-translate-y-[1px] ${theme.cardClass}`}
           >
             <div>
@@ -31,7 +31,7 @@ export function ModuleHubPage({ moduleId, title, subtitle }) {
               <p className={`text-sm ${theme.cardTextClass}`}>{feature.shortDescription}</p>
             </div>
             <span className={`rounded-full border px-3 py-1 text-xs font-bold ${theme.chipClass}`}>
-              W budowie
+              {feature.chipLabel ?? 'W budowie'}
             </span>
           </Link>
         ))}

@@ -6,15 +6,21 @@ import './index.css';
 import 'leaflet/dist/leaflet.css';
 import { UiPrefsProvider } from './context/UiPrefsContext';
 import { BenchesProvider } from './context/BenchesContext';
+import { AuthProvider } from './context/AuthContext';
+import { RoutesProvider } from './context/RoutesContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <UiPrefsProvider>
-      <BenchesProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </BenchesProvider>
+      <AuthProvider>
+        <BenchesProvider>
+          <RoutesProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </RoutesProvider>
+        </BenchesProvider>
+      </AuthProvider>
     </UiPrefsProvider>
   </React.StrictMode>,
 );

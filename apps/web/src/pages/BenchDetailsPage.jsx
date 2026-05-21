@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faListUl, faLocationDot, faStar, faTrashCan, faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import { statusMeta } from '@/data/benches';
+import { benchTypeMeta, statusMeta } from '@/data/benches';
 import { useBenches } from '@/context/BenchesContext';
 
 function participantLabel(participantId, currentUserId) {
@@ -17,7 +17,8 @@ export function BenchDetailsPage() {
   const [searchParams] = useSearchParams();
   const {
     currentUser,
-    benches,
+    visibleBenches,
+    isLoggedIn,
     toggleFavorite,
     getMeeting,
     getStatus,
@@ -30,11 +31,11 @@ export function BenchDetailsPage() {
     deleteMeeting,
   } = useBenches();
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
-  const selectedBenchId = searchParams.get('benchId') || searchParams.get('bench') || benches[0]?.id || '';
+  const selectedBenchId = searchParams.get('benchId') || searchParams.get('bench') || visibleBenches[0]?.id || '';
 
   const selectedBench = useMemo(() => {
-    return benches.find((bench) => bench.id === selectedBenchId) ?? benches[0] ?? null;
-  }, [benches, selectedBenchId]);
+    return visibleBenches.find((bench) => bench.id === selectedBenchId) ?? visibleBenches[0] ?? null;
+  }, [selectedBenchId, visibleBenches]);
 
   useEffect(() => {
     setActivePhotoIndex(0);
@@ -54,6 +55,7 @@ export function BenchDetailsPage() {
   const selectedMeeting = getMeeting(selectedBench.id);
   const selectedStatus = getStatus(selectedBench.id);
   const selectedStatusMeta = statusMeta[selectedStatus];
+  const selectedTypeMeta = benchTypeMeta[selectedBench.type] ?? benchTypeMeta.city;
   const selectedIsOwner = isOwner(selectedBench.id);
   const selectedIsParticipant = isParticipant(selectedBench.id);
   const selectedCanJoin =
@@ -94,20 +96,33 @@ export function BenchDetailsPage() {
 
           <div className="flex items-center gap-2">
             <span className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedStatusMeta.badgeClass}`}>
-              {selectedStatusMeta.label}
+              {isLoggedIn ? selectedStatusMeta.label : selectedTypeMeta.label}
             </span>
-            <button
-              type="button"
-              onClick={() => toggleFavorite(selectedBench.id)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)]"
-              aria-label={isFavorite(selectedBench.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
-            >
-              <FontAwesomeIcon icon={faStar} className={isFavorite(selectedBench.id) ? 'text-[#f59f00]' : ''} />
-            </button>
+            {selectedBench.type === 'business' && (
+              <span className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedTypeMeta.badgeClass}`}>
+                Ławka biznesowa
+              </span>
+            )}
+            {isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => toggleFavorite(selectedBench.id)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)]"
+                aria-label={isFavorite(selectedBench.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+              >
+                <FontAwesomeIcon icon={faStar} className={isFavorite(selectedBench.id) ? 'text-[#f59f00]' : ''} />
+              </button>
+            )}
           </div>
         </div>
 
         <p className="mt-3 text-sm text-[var(--text-muted)]">{selectedBench.description}</p>
+
+        {selectedBench.type === 'business' && (
+          <p className="mt-2 rounded-xl border border-[#f59f00]/35 bg-[#fff4dd] p-3 text-xs font-semibold text-[#9a6400]">
+            Ławka biznesowa - treść dodana przez użytkownika, nie miejska.
+          </p>
+        )}
 
         <div className="mt-4 overflow-hidden rounded-2xl border border-[var(--outline-soft)] bg-[#edf4f4]">
           <img
@@ -131,8 +146,9 @@ export function BenchDetailsPage() {
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-3">
-          {selectedMeeting ? (
+        {isLoggedIn ? (
+          <div className="mt-4 rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-3">
+            {selectedMeeting ? (
             <>
               <p className="flex items-center gap-2 text-sm font-bold">
                 <FontAwesomeIcon icon={faUserGroup} />
@@ -147,53 +163,60 @@ export function BenchDetailsPage() {
             </>
           ) : (
             <p className="text-sm text-[var(--text-muted)]">Brak aktywnego spotkania na tej ławce.</p>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <p className="mt-4 rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-3 text-sm font-semibold text-[var(--text-muted)]">
+            Spotkania, ulubione i zgłaszanie obecności są dostępne po zalogowaniu.
+          </p>
+        )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {!selectedMeeting && (
-            <button type="button" onClick={() => createMeeting(selectedBench.id)} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
-              Utwórz spotkanie
-            </button>
-          )}
+        {isLoggedIn && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {!selectedMeeting && (
+              <button type="button" onClick={() => createMeeting(selectedBench.id)} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
+                Utwórz spotkanie
+              </button>
+            )}
 
-          {selectedMeeting && selectedIsParticipant && (
-            <button
-              type="button"
-              onClick={() => leaveMeeting(selectedBench.id)}
-              className="rounded-xl border border-[var(--outline-soft)] bg-white px-4 py-2 text-sm font-bold text-[var(--text-muted)]"
-            >
-              Opuść spotkanie
-            </button>
-          )}
+            {selectedMeeting && selectedIsParticipant && (
+              <button
+                type="button"
+                onClick={() => leaveMeeting(selectedBench.id)}
+                className="rounded-xl border border-[var(--outline-soft)] bg-white px-4 py-2 text-sm font-bold text-[var(--text-muted)]"
+              >
+                Opuść spotkanie
+              </button>
+            )}
 
-          {selectedMeeting && !selectedIsParticipant && selectedCanJoin && (
-            <button type="button" onClick={() => joinMeeting(selectedBench.id)} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
-              Dołącz do spotkania
-            </button>
-          )}
+            {selectedMeeting && !selectedIsParticipant && selectedCanJoin && (
+              <button type="button" onClick={() => joinMeeting(selectedBench.id)} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
+                Dołącz do spotkania
+              </button>
+            )}
 
-          {selectedMeeting && !selectedIsParticipant && !selectedCanJoin && (
-            <button
-              type="button"
-              disabled
-              className="cursor-not-allowed rounded-xl border border-[#d94841]/30 bg-[#fdeceb] px-4 py-2 text-sm font-bold text-[#8f231f]"
-            >
-              Spotkanie pełne
-            </button>
-          )}
+            {selectedMeeting && !selectedIsParticipant && !selectedCanJoin && (
+              <button
+                type="button"
+                disabled
+                className="cursor-not-allowed rounded-xl border border-[#d94841]/30 bg-[#fdeceb] px-4 py-2 text-sm font-bold text-[#8f231f]"
+              >
+                Spotkanie pełne
+              </button>
+            )}
 
-          {selectedMeeting && selectedIsOwner && (
-            <button
-              type="button"
-              onClick={() => deleteMeeting(selectedBench.id)}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#d94841]/35 bg-white px-4 py-2 text-sm font-bold text-[#8f231f]"
-            >
-              <FontAwesomeIcon icon={faTrashCan} />
-              Usuń spotkanie
-            </button>
-          )}
-        </div>
+            {selectedMeeting && selectedIsOwner && (
+              <button
+                type="button"
+                onClick={() => deleteMeeting(selectedBench.id)}
+                className="inline-flex items-center gap-2 rounded-xl border border-[#d94841]/35 bg-white px-4 py-2 text-sm font-bold text-[#8f231f]"
+              >
+                <FontAwesomeIcon icon={faTrashCan} />
+                Usuń spotkanie
+              </button>
+            )}
+          </div>
+        )}
       </article>
     </section>
   );

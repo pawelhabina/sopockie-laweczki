@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CircleMarker, MapContainer, Popup, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faListUl, faLocationDot, faXmark, faStar } from '@fortawesome/free-solid-svg-icons';
-import { statusMeta } from '@/data/benches';
+import { faHeart, faListUl, faLocationDot, faPlus, faXmark, faStar } from '@fortawesome/free-solid-svg-icons';
+import { benchTypeMeta, statusMeta } from '@/data/benches';
 import { useBenches } from '@/context/BenchesContext';
 
 const SOPOT_CENTER = [54.4416, 18.5601];
@@ -34,8 +34,9 @@ function MapDeselectOnClick({ onDeselect }) {
 export function BenchesMapPage() {
   const [searchParams] = useSearchParams();
   const {
-    benches,
+    visibleBenches,
     favorites,
+    isLoggedIn,
     toggleFavorite,
     getMeeting,
     getStatus,
@@ -57,14 +58,14 @@ export function BenchesMapPage() {
       return null;
     }
 
-    return benches.find((bench) => bench.id === selectedBenchId) ?? null;
-  }, [benches, selectedBenchId]);
+    return visibleBenches.find((bench) => bench.id === selectedBenchId) ?? null;
+  }, [selectedBenchId, visibleBenches]);
 
   useEffect(() => {
-    if (selectedBenchId && !benches.some((bench) => bench.id === selectedBenchId)) {
+    if (selectedBenchId && !visibleBenches.some((bench) => bench.id === selectedBenchId)) {
       setSelectedBenchId('');
     }
-  }, [benches, selectedBenchId]);
+  }, [selectedBenchId, visibleBenches]);
 
   const selectedMeeting = selectedBench ? getMeeting(selectedBench.id) : null;
   const selectedStatus = selectedBench ? getStatus(selectedBench.id) : 'free';
@@ -76,7 +77,7 @@ export function BenchesMapPage() {
     !selectedIsParticipant &&
     selectedMeeting.participants.length < selectedMeeting.maxParticipants;
 
-  const favoriteBenches = benches.filter((bench) => favorites.includes(bench.id));
+  const favoriteBenches = visibleBenches.filter((bench) => favorites.includes(bench.id));
 
   return (
     <section className="relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen">
@@ -87,9 +88,12 @@ export function BenchesMapPage() {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {benches.map((bench) => {
+            {visibleBenches.map((bench) => {
               const benchStatus = getStatus(bench.id);
-              const meta = statusMeta[benchStatus];
+              const status = statusMeta[benchStatus];
+              const type = benchTypeMeta[bench.type] ?? benchTypeMeta.city;
+              const markerFill = bench.type === 'business' ? type.markerFill : status.markerFill;
+              const markerStroke = bench.type === 'business' ? type.markerStroke : status.markerStroke;
 
               return (
                 <CircleMarker
@@ -97,8 +101,8 @@ export function BenchesMapPage() {
                   center={[bench.lat, bench.lng]}
                   radius={10}
                   pathOptions={{
-                    color: meta.markerStroke,
-                    fillColor: meta.markerFill,
+                    color: markerStroke,
+                    fillColor: markerFill,
                     fillOpacity: 0.94,
                     weight: selectedBenchId === bench.id ? 4 : 3,
                     bubblingMouseEvents: false,
@@ -108,7 +112,7 @@ export function BenchesMapPage() {
                   }}
                 >
                   <Tooltip direction="top" offset={[0, -10]} opacity={1} permanent={false}>
-                    {bench.name} - {meta.label}
+                    {bench.name} - {isLoggedIn ? status.label : type.label}
                   </Tooltip>
                 </CircleMarker>
               );
@@ -134,20 +138,27 @@ export function BenchesMapPage() {
                         <FontAwesomeIcon icon={faLocationDot} />
                         {selectedBench.address}
                       </p>
+                      {selectedBench.type === 'business' && (
+                        <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-bold ${benchTypeMeta.business.badgeClass}`}>
+                          Ławka biznesowa - treść dodana przez użytkownika
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => toggleFavorite(selectedBench.id)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)]"
-                        aria-label={isFavorite(selectedBench.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
-                      >
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          className={isFavorite(selectedBench.id) ? 'text-[#f59f00]' : ''}
-                        />
-                      </button>
+                      {isLoggedIn && (
+                        <button
+                          type="button"
+                          onClick={() => toggleFavorite(selectedBench.id)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)]"
+                          aria-label={isFavorite(selectedBench.id) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+                        >
+                          <FontAwesomeIcon
+                            icon={faStar}
+                            className={isFavorite(selectedBench.id) ? 'text-[#f59f00]' : ''}
+                          />
+                        </button>
+                      )}
 
                       <button
                         type="button"
@@ -160,68 +171,76 @@ export function BenchesMapPage() {
                     </div>
                   </div>
 
-                  <div className="mt-2 flex items-center justify-between gap-2">
-                    <span className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedStatusMeta.badgeClass}`}>
-                      {selectedStatusMeta.label}
-                    </span>
-                    <span className="rounded-full border border-[var(--outline-soft)] bg-[#f8fbfa] px-3 py-1 text-xs font-bold text-[var(--text-muted)]">
-                      {selectedMeeting
-                        ? `Spotkanie ${selectedMeeting.participants.length}/${selectedMeeting.maxParticipants}`
-                        : 'Brak spotkania'}
-                    </span>
-                  </div>
+                  {isLoggedIn ? (
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <span className={`rounded-full border px-3 py-1 text-xs font-bold ${selectedStatusMeta.badgeClass}`}>
+                        {selectedStatusMeta.label}
+                      </span>
+                      <span className="rounded-full border border-[var(--outline-soft)] bg-[#f8fbfa] px-3 py-1 text-xs font-bold text-[var(--text-muted)]">
+                        {selectedMeeting
+                          ? `Spotkanie ${selectedMeeting.participants.length}/${selectedMeeting.maxParticipants}`
+                          : 'Brak spotkania'}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="mt-3 rounded-xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-3 text-xs font-semibold text-[var(--text-muted)]">
+                      Spotkania, ulubione i zgłaszanie obecności są dostępne po zalogowaniu.
+                    </p>
+                  )}
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {!selectedMeeting && (
-                      <button
-                        type="button"
-                        onClick={() => createMeeting(selectedBench.id)}
-                        className="cta-btn rounded-xl px-3 py-2 text-xs font-bold"
-                      >
-                        Utwórz spotkanie
-                      </button>
-                    )}
+                  {isLoggedIn && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {!selectedMeeting && (
+                        <button
+                          type="button"
+                          onClick={() => createMeeting(selectedBench.id)}
+                          className="cta-btn rounded-xl px-3 py-2 text-xs font-bold"
+                        >
+                          Utwórz spotkanie
+                        </button>
+                      )}
 
-                    {selectedMeeting && selectedIsParticipant && (
-                      <button
-                        type="button"
-                        onClick={() => leaveMeeting(selectedBench.id)}
-                        className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-xs font-bold text-[var(--text-muted)]"
-                      >
-                        Opuść spotkanie
-                      </button>
-                    )}
+                      {selectedMeeting && selectedIsParticipant && (
+                        <button
+                          type="button"
+                          onClick={() => leaveMeeting(selectedBench.id)}
+                          className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-xs font-bold text-[var(--text-muted)]"
+                        >
+                          Opuść spotkanie
+                        </button>
+                      )}
 
-                    {selectedMeeting && !selectedIsParticipant && selectedCanJoin && (
-                      <button
-                        type="button"
-                        onClick={() => joinMeeting(selectedBench.id)}
-                        className="cta-btn rounded-xl px-3 py-2 text-xs font-bold"
-                      >
-                        Dołącz do spotkania
-                      </button>
-                    )}
+                      {selectedMeeting && !selectedIsParticipant && selectedCanJoin && (
+                        <button
+                          type="button"
+                          onClick={() => joinMeeting(selectedBench.id)}
+                          className="cta-btn rounded-xl px-3 py-2 text-xs font-bold"
+                        >
+                          Dołącz do spotkania
+                        </button>
+                      )}
 
-                    {selectedMeeting && !selectedIsParticipant && !selectedCanJoin && (
-                      <button
-                        type="button"
-                        disabled
-                        className="cursor-not-allowed rounded-xl border border-[#d94841]/30 bg-[#fdeceb] px-3 py-2 text-xs font-bold text-[#8f231f]"
-                      >
-                        Spotkanie pełne
-                      </button>
-                    )}
+                      {selectedMeeting && !selectedIsParticipant && !selectedCanJoin && (
+                        <button
+                          type="button"
+                          disabled
+                          className="cursor-not-allowed rounded-xl border border-[#d94841]/30 bg-[#fdeceb] px-3 py-2 text-xs font-bold text-[#8f231f]"
+                        >
+                          Spotkanie pełne
+                        </button>
+                      )}
 
-                    {selectedMeeting && selectedIsOwner && (
-                      <button
-                        type="button"
-                        onClick={() => deleteMeeting(selectedBench.id)}
-                        className="rounded-xl border border-[#d94841]/35 bg-white px-3 py-2 text-xs font-bold text-[#8f231f]"
-                      >
-                        Usuń spotkanie
-                      </button>
-                    )}
-                  </div>
+                      {selectedMeeting && selectedIsOwner && (
+                        <button
+                          type="button"
+                          onClick={() => deleteMeeting(selectedBench.id)}
+                          className="rounded-xl border border-[#d94841]/35 bg-white px-3 py-2 text-xs font-bold text-[#8f231f]"
+                        >
+                          Usuń spotkanie
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   <Link
                     to={`/benches/details?benchId=${selectedBench.id}`}
@@ -234,14 +253,26 @@ export function BenchesMapPage() {
             )}
           </MapContainer>
 
-          <button
-            type="button"
-            onClick={() => setShowFavorites((prev) => !prev)}
-            className="absolute right-3 top-3 z-[500] flex h-11 w-11 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)] shadow-card transition hover:scale-105"
-            aria-label="Ulubione ławki"
-          >
-            <FontAwesomeIcon icon={faHeart} className={favoriteBenches.length > 0 ? 'text-[#d94841]' : ''} />
-          </button>
+          {isLoggedIn && (
+            <button
+              type="button"
+              onClick={() => setShowFavorites((prev) => !prev)}
+              className="absolute right-3 top-3 z-[500] flex h-11 w-11 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)] shadow-card transition hover:scale-105"
+              aria-label="Ulubione ławki"
+            >
+              <FontAwesomeIcon icon={faHeart} className={favoriteBenches.length > 0 ? 'text-[#d94841]' : ''} />
+            </button>
+          )}
+
+          {isLoggedIn && (
+            <Link
+              to="/benches/add"
+              className="absolute left-3 top-3 z-[500] flex h-11 w-11 items-center justify-center rounded-full border border-[var(--outline-soft)] bg-white text-[var(--text-muted)] shadow-card transition hover:scale-105"
+              aria-label="Dodaj ławkę biznesową"
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </Link>
+          )}
 
           <Link
             to="/benches/list"
@@ -252,7 +283,7 @@ export function BenchesMapPage() {
           </Link>
 
           <div className="absolute bottom-3 left-3 right-16 z-[500] flex flex-wrap gap-2">
-            {Object.entries(statusMeta).map(([statusKey, meta]) => (
+            {(isLoggedIn ? Object.entries(statusMeta) : Object.entries(benchTypeMeta)).map(([statusKey, meta]) => (
               <div
                 key={statusKey}
                 className={`inline-flex items-center gap-2 rounded-full border bg-white/95 px-3 py-1 text-xs font-bold backdrop-blur ${meta.badgeClass}`}
@@ -267,7 +298,7 @@ export function BenchesMapPage() {
             ))}
           </div>
 
-          {showFavorites && (
+          {isLoggedIn && showFavorites && (
             <aside className="absolute right-3 top-16 z-[500] w-[min(280px,calc(100%-1.5rem))] rounded-2xl border border-[var(--outline-soft)] bg-white p-3 shadow-card sm:right-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <p className="font-heading text-base">Ulubione ławki</p>

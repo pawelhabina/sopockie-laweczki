@@ -1,0 +1,40 @@
+--- Strona 1 ---
+DOKUMENTACJA FUNKCJONALNA – Aplikacja „Ławeczka” Wersja: 1.0 – Pełna dokumentacja opisowa Autor: Bartłomiej Przybyciel + Coplit Data: 2026  Spis treści 1. Cel projektu 2. Zakres i filozofia aplikacji 3. Wymagania biznesowe 4. Model użytkownika (Gość / Zalogowany) 5. Moduły aplikacji  o 5.1 Spotkania o 5.2 Trasy o 5.3 Ławeczki 6. Ławki biznesowe — zasady 7. Moderacja treści 8. Bezpieczeństwo i prywatność 9. Autoryzacja Kartą Mieszkańca 10. Logika dostępu (tabela) 11. Przycisk SOS 12. Wymagania niefunkcjonalne 13. Wymagania techniczne / API 14. MVP – zakres minimalny 15. Roadmapa wersji 1.1 / 1.2  1. Cel projektu Celem aplikacji „Ławeczka” jest: • stworzenie bezpiecznego i prostego narzędzia do spotkań mieszkańców, • wspieranie aktywności i spacerów, • rozwijanie kapitału społecznego Sopotu, • wykorzystanie i uporządkowanie infrastruktury ławek w mieście, • stworzenie platformy także dla ławek biznesowych, • zapewnienie użytkownikom bezpieczeństwa i anonimizacji, • stworzenie spójnego ekosystemu z Kartą Mieszkańca.
+
+--- Strona 2 ---
+2. Zakres projektu i filozofia aplikacji Aplikacja działa jak: 
+✔ „Mapa Sopotu + Spotkania + Trasy + Ławki” Ale tylko zweryfikowani mieszkańcy mogą korzystać ze wszystkich funkcji. Filozofia: Bezpieczeństwo > prostota > lokalność > użyteczność. Dlatego: • Spotkania są tylko dla zalogowanych, • Zdjęcia są moderowane, • Ławki biznesowe są wyraźnie oznaczone, • Nie ma czatu prywatnego, • Lokalizacja jest rozmyta.  3. Wymagania biznesowe 1. Użytkownicy muszą być weryfikowani Kartą Mieszkańca. 2. Aplikacja musi wspierać seniorów – prostota, duże kafelki, brak haseł. 3. Miasto musi mieć możliwość kontrolowania zasobów (ławki miejskie, trasy). 4. Musi istnieć moduł moderacji (zdjęcia, ławki biznesowe, trasy). 5. Aplikacja musi umożliwiać przyszłą rozbudowę:  o ławki tematyczne, o partnerstwa biznesowe, o wydarzenia miejskie.  4. Model użytkownika 4.1 Użytkownik niezalogowany („Gość”) Może: • przeglądać mapę ławek, • przeglądać trasy oficjalne, • widzieć publiczne ławki biznesowe, • widzieć publiczne trasy użytkowników, • korzystać z części informacyjnej.
+
+--- Strona 3 ---
+Nie może: • widzieć spotkań, • zgłaszać obecności, • dodać trasy, • dodać ławki biznesowej, • korzystać z SOS. Spotkania są niewidoczne — nie ma nawet zakładki.  4.2 Użytkownik zalogowany (Karta Mieszkańca) Może: • zgłaszać obecność na ławce, • widzieć kto jest na ławce (anonimizowany), • dodawać ławki biznesowe, • dodawać trasy, zdjęcia, opisy, • decydować o widoczności tras, • zgłaszać nadużycia, • korzystać z SOS, • mieć ulubione trasy i ławki. To jest pełny użytkownik aplikacji.  5. Moduły aplikacji  5.1 Moduł „Spotkania” (tylko zalogowani) Funkcje: • wybór ławeczki i zgłoszenie obecności, • ustawienie czasu pobytu (15–60 min), • ustawienie tematu spotkania (interesy, konteksty), • widok innych aktywnych użytkowników, • subskrypcje „obserwowanych ławek”, • powiadomienia push. Wymagania:
+
+--- Strona 4 ---
+• spotkania nigdy nie są widoczne dla gościa, • lokalizacja użytkownika jest zawsze lekko rozmyta (100–300m), • użytkownik identyfikowany jako: „Anna, 67 lat” lub „A. 67”.  5.2 Moduł „Trasy” 5.2.1 Trasy oficjalne (dla wszystkich) Opisane przez administrację miasta. Dane: • czas, dystans, kroki, • poziom trudności, • ilość ławek po drodze, • zdjęcia i opis. 5.2.2 Trasy użytkowników (zalogowani) Zalogowany użytkownik może: • nagrać trasę GPS, • nadać nazwę i opis, • dodać zdjęcia (z moderacją), • zaznaczyć ławki, • wybrać widoczność:  1. Prywatna, 2. Tylko dla zalogowanych, 3. Publiczna (po moderacji). Użytkownik niezalogowany widzi tylko trasy publiczne i oficjalne.  5.3 Moduł „Ławeczki” Zawiera: • mapę ławek miejskich, • filtry: cień, oświetlenie, dostępność, odległość, • opisy i zdjęcia, • możliwość oznaczenia jako ulubiona (zalogowani).
+
+--- Strona 5 ---
+6. Ławki biznesowe – zasady Dodawane przez zalogowanych mieszkańców. Pola wymagane: • nazwa ławki, • typ (usługowa, gastronomiczna, edukacyjna…), • lokalizacja GPS, • opis, • checkbox: „Oświadczam, że ławka NIE jest elementem infrastruktury miejskiej.” Widoczność: • zawsze dla zalogowanych, • dla gości – tylko po moderacji i tylko jeśli oznaczone jako „publiczne”. Oznaczenie: • kolor pomarańczowy, • etykieta: „Ławka biznesowa – treść dodana przez użytkownika (nie miejska)”.  7. Moderacja treści Zdjęcia: • automatyczna moderacja (AI), • odrzucanie zdjęć z twarzami, przemocą, nagością, danymi wrażliwymi, • opcjonalna moderacja ręczna, • rozmycie twarzy (jeśli to możliwe). Trasy publiczne: • wymagają akceptacji lub pozytywnej automatycznej analizy. Ławki biznesowe: • muszą przejść moderację przed publikacją gościom.  8. Bezpieczeństwo i prywatność
+
+--- Strona 6 ---
+• anonimizacja: imię/inicjał + wiek, • brak prywatnych wiadomości, • brak komentarzy, • brak dokładnego udostępniania pozycji, • możliwość zgłoszenia użytkownika, • blokada konta po ID Karty Mieszkańca, • wszystkie dane przechowywane z minimalizacją (tylko ID karty + preferencje).  9. Autoryzacja – Karta Mieszkańca Proces: 1. użytkownik wybiera kafelek: „Zaloguj Kartą Mieszkańca”, 2. następuje weryfikacja poprzez API, 3. aplikacja otrzymuje token i ID użytkownika, 4. brak haseł, brak loginów.  10. Logika dostępu (tabela) Funkcja Gość Zalogowany Mapa ławek miejskich 
+✔ 
+✔ Ławki biznesowe publiczne wszystkie Spotkania 
+❌ niewidoczne 
+✔ Zgłaszanie obecności 
+❌ 
+✔ Trasy oficjalne 
+✔ 
+✔ Trasy użytkowników publiczne wszystkie Dodawanie tras 
+❌ 
+✔ Dodawanie zdjęć 
+❌ 
+✔ (moderacja) SOS 
+❌ 
+✔ Ulubione 
+❌ 
+✔  11. Przycisk SOS • aktywny tylko po zalogowaniu, • możliwość wyboru kontaktu zaufanego, • powiadomienie SMS lub push, • opcjonalna integracja ze Strażą Miejską (w przyszłości).
+
+--- Strona 7 ---
+12. Wymagania niefunkcjonalne • aplikacja intuicyjna, duże elementy UI, czytelna mapa, • brak skomplikowanych formularzy, • kompatybilność: Android, iOS, PWA, • wydajność: szybkie ładowanie mapy, małe obciążenie baterii, • dostępność: duże fonty, kontrast dla seniorów, • architektura: modułowa — łatwe dodanie nowych funkcji.  13. Wymagania techniczne (opisowo) • Integracja z API Karty Mieszkańca (QB Mobile), • Baza danych użytkowników (tylko ID + preferencje), • Baza ławek miejskich (import danych z GIS miasta), - sprawdzić czy jest, jeśli nie dodawanie indywidualne • Baza ławek biznesowych, • System moderacji zdjęć (AI + panel admina), • Mechanizm powiadomień push, • Rejestr nadużyć i zgłoszeń.  14. MVP – wersja minimalna 1. Logowanie Kartą Mieszkańca, 2. Ławki miejskie + biznesowe (dodawanie), 3. Spotkania (zalogowani), 4. Trasy oficjalne + podstawowe trasy użytkownika, 5. Moderacja zdjęć, 6. Tryb Gościa bez Spotkań.  15. Roadmapa (propozycja) Wersja 1.1 • ławki tematyczne, • statystyki spacerów, • historia aktywności, • rankingi tras.
+
+--- Strona 8 ---
+Wersja 1.2 • integracja z wydarzeniami miejskimi, • powiadomienia o wydarzeniach na trasach, • integracja z miejską siecią Wi-Fi.
