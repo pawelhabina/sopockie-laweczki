@@ -55,7 +55,7 @@ function RouteStatusLegend() {
 export function RoutesMapPage() {
   const [searchParams] = useSearchParams();
   const { isLoggedIn } = useAuth();
-  const { allRoutes, favoriteRoutes, toggleFavorite, isFavorite } = useRoutes();
+  const { visibleRoutes, favoriteRoutes, toggleFavorite, isFavorite } = useRoutes();
   const [showFavorites, setShowFavorites] = useState(false);
   const [selectedRouteId, setSelectedRouteId] = useState(() => searchParams.get('routeId') || '');
 
@@ -64,14 +64,14 @@ export function RoutesMapPage() {
       return null;
     }
 
-    return allRoutes.find((route) => route.id === selectedRouteId) ?? null;
-  }, [allRoutes, selectedRouteId]);
+    return visibleRoutes.find((route) => route.id === selectedRouteId) ?? null;
+  }, [selectedRouteId, visibleRoutes]);
 
   useEffect(() => {
-    if (selectedRouteId && !allRoutes.some((route) => route.id === selectedRouteId)) {
+    if (selectedRouteId && !visibleRoutes.some((route) => route.id === selectedRouteId)) {
       setSelectedRouteId('');
     }
-  }, [allRoutes, selectedRouteId]);
+  }, [selectedRouteId, visibleRoutes]);
 
   return (
     <section className="relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen">
@@ -82,7 +82,7 @@ export function RoutesMapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {allRoutes.map((route) => {
+          {visibleRoutes.map((route) => {
             const categoryTheme = routeCategoryMeta[route.category] ?? routeCategoryMeta.piesza;
             const routeSourceTheme = routeSourceMeta[route.source] ?? routeSourceMeta.community;
             const isSelected = selectedRouteId === route.id;
@@ -216,10 +216,10 @@ export function RoutesMapPage() {
 
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Link
-                    to={`/routes/list?routeId=${selectedRoute.id}&segment=${selectedRoute.source}`}
+                    to={`/routes/details?routeId=${selectedRoute.id}`}
                     className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-xs font-bold text-[var(--text-muted)]"
                   >
-                    Szczegóły na liście
+                    Szczegóły
                   </Link>
                   {isLoggedIn && selectedRoute.source === 'community' && (
                     <Link to="/routes/add" className="cta-btn rounded-xl px-3 py-2 text-xs font-bold">

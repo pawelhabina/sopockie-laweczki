@@ -7,6 +7,7 @@ const BenchesContext = createContext(null);
 const BENCHES_KEY = 'benches-catalog-v1';
 const FAVORITES_KEY = 'benches-favorites-v1';
 const MEETINGS_KEY = 'benches-meetings-v1';
+const FOLLOWED_BENCHES_KEY = 'benches-followed-v1';
 const BUSINESS_APPROVED_STATUS = 'approved';
 
 function readJsonStorage(key, fallbackValue) {
@@ -250,6 +251,7 @@ export function BenchesProvider({ children }) {
   const { currentUser, isLoggedIn } = useAuth();
   const [benches, setBenches] = useState(() => sanitizeBenches(readJsonStorage(BENCHES_KEY, benchList)));
   const [favorites, setFavorites] = useState(() => readJsonStorage(FAVORITES_KEY, []));
+  const [followedBenchIds, setFollowedBenchIds] = useState(() => readJsonStorage(FOLLOWED_BENCHES_KEY, []));
   const [meetingsByBench, setMeetingsByBench] = useState(() => readJsonStorage(MEETINGS_KEY, buildInitialMeetings()));
 
   const benchesById = useMemo(() => {
@@ -266,6 +268,7 @@ export function BenchesProvider({ children }) {
   useEffect(() => {
     const validBenchIds = new Set(benches.map((bench) => bench.id));
     setFavorites((prev) => sanitizeFavorites(prev, validBenchIds));
+    setFollowedBenchIds((prev) => sanitizeFavorites(prev, validBenchIds));
     setMeetingsByBench((prev) => sanitizeMeetingsMap(prev, benchesById));
   }, [benches, benchesById]);
 
@@ -277,10 +280,29 @@ export function BenchesProvider({ children }) {
     window.localStorage.setItem(MEETINGS_KEY, JSON.stringify(meetingsByBench));
   }, [meetingsByBench]);
 
+  useEffect(() => {
+    window.localStorage.setItem(FOLLOWED_BENCHES_KEY, JSON.stringify(followedBenchIds));
+  }, [followedBenchIds]);
+
   const value = useMemo(() => {
     const activeMeetings = Object.values(meetingsByBench).filter((meeting) => getMeetingStatus(meeting) !== 'ended');
     const visibleBenches = isLoggedIn ? benches : benches.filter(isBenchVisibleForGuest);
     const visibleMeetings = isLoggedIn ? activeMeetings : [];
+    const favoriteBenches = isLoggedIn ? visibleBenches.filter((bench) => favorites.includes(bench.id)) : [];
+    const followedBenches = visibleBenches.filter((bench) => followedBenchIds.includes(bench.id));
+    const meetingNotifications = isLoggedIn
+      ? activeMeetings
+          .filter((meeting) => followedBenchIds.includes(meeting.benchId) && !meeting.participants.includes(currentUser.id))
+          .map((meeting) => ({
+            id: `meeting-notification-${meeting.id}`,
+            type: 'meeting',
+            benchId: meeting.benchId,
+            meetingId: meeting.id,
+            title: 'Nowe spotkanie przy obserwowanej ławce',
+            message: meeting.title,
+            createdAt: meeting.createdAt,
+          }))
+      : [];
 
     const getActiveMeeting = (benchId) => {
       const meeting = meetingsByBench[benchId] ?? null;
@@ -292,8 +314,12 @@ export function BenchesProvider({ children }) {
       isLoggedIn,
       benches,
       visibleBenches,
+      favoriteBenches,
       meetings: activeMeetings,
       visibleMeetings,
+      followedBenchIds,
+      followedBenches,
+      meetingNotifications,
       meetingsByBench,
       favorites,
       toggleFavorite: (benchId) => {
@@ -311,6 +337,21 @@ export function BenchesProvider({ children }) {
         return { ok: true };
       },
       clearFavorites: () => setFavorites([]),
+      toggleFollowBench: (benchId) => {
+        if (!isLoggedIn) {
+          return { ok: false, reason: 'auth' };
+        }
+
+        setFollowedBenchIds((prev) => {
+          if (prev.includes(benchId)) {
+            return prev.filter((id) => id !== benchId);
+          }
+          return [...prev, benchId];
+        });
+
+        return { ok: true };
+      },
+      isBenchFollowed: (benchId) => isLoggedIn && followedBenchIds.includes(benchId),
       createMeeting: (benchId, payload = {}) => {
         if (!isLoggedIn) {
           return { ok: false, reason: 'auth' };
@@ -457,6 +498,7 @@ export function BenchesProvider({ children }) {
       deleteBench: (benchId) => {
         setBenches((prev) => prev.filter((bench) => bench.id !== benchId));
         setFavorites((prev) => prev.filter((favoriteId) => favoriteId !== benchId));
+        setFollowedBenchIds((prev) => prev.filter((followedId) => followedId !== benchId));
         setMeetingsByBench((prev) => {
           const nextState = { ...prev };
           delete nextState[benchId];
@@ -466,6 +508,7 @@ export function BenchesProvider({ children }) {
       resetBenches: () => {
         setBenches(sanitizeBenches(benchList));
         setFavorites([]);
+        setFollowedBenchIds([]);
         setMeetingsByBench(buildInitialMeetings());
       },
       saveMeeting: (payload) => {
@@ -508,7 +551,7 @@ export function BenchesProvider({ children }) {
         return meeting ? meeting.ownerId === currentUser.id : false;
       },
     };
-  }, [benches, benchesById, currentUser, favorites, isLoggedIn, meetingsByBench]);
+  }, [benches, benchesById, currentUser, favorites, followedBenchIds, isLoggedIn, meetingsByBench]);
 
   return <BenchesContext.Provider value={value}>{children}</BenchesContext.Provider>;
 }

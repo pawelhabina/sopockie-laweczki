@@ -2,13 +2,14 @@ import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilter, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
+import { ReportButton } from '@/components/ReportButton';
 import { routeCategories, routeSourceMeta } from '@/data/routes';
 import { useAuth } from '@/context/AuthContext';
 import { useRoutes } from '@/context/RoutesContext';
 
 export function RoutesListPage() {
   const { isLoggedIn, currentUser } = useAuth();
-  const { allRoutes, favorites, toggleFavorite, isFavorite, deleteRoute } = useRoutes();
+  const { visibleRoutes, favorites, toggleFavorite, isFavorite, deleteRoute } = useRoutes();
   const [searchParams] = useSearchParams();
   const createdFlash = searchParams.get('created') === '1';
   const [search, setSearch] = useState('');
@@ -22,7 +23,7 @@ export function RoutesListPage() {
   const filteredRoutes = useMemo(() => {
     const normalized = search.trim().toLowerCase();
 
-    return allRoutes
+    return visibleRoutes
       .filter((route) => {
         if (segment === 'all') {
           return true;
@@ -49,7 +50,7 @@ export function RoutesListPage() {
         );
       })
       .filter((route) => (isLoggedIn && onlyFavorites ? favorites.includes(route.id) : true));
-  }, [allRoutes, category, favorites, isLoggedIn, onlyFavorites, search, segment]);
+  }, [category, favorites, isLoggedIn, onlyFavorites, search, segment, visibleRoutes]);
 
   return (
     <section className="flex flex-col gap-4">
@@ -155,6 +156,11 @@ export function RoutesListPage() {
                     <span className={`rounded-full border px-3 py-1 text-xs font-bold ${sourceMeta.badgeClass}`}>
                       {sourceMeta.label}
                     </span>
+                    {route.visibility === 'private' && (
+                      <span className="rounded-full border border-[#f59f00]/35 bg-[#fff4dd] px-3 py-1 text-xs font-bold text-[#9a6400]">
+                        Prywatna
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm text-[var(--text-muted)]">Start: {route.startPlace}</p>
                 </div>
@@ -205,6 +211,12 @@ export function RoutesListPage() {
                 <Link to={`/routes?routeId=${route.id}`} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
                   Otwórz na mapie
                 </Link>
+                <Link
+                  to={`/routes/details?routeId=${route.id}`}
+                  className="rounded-xl border border-[var(--outline-soft)] bg-white px-4 py-2 text-sm font-bold text-[var(--text-muted)]"
+                >
+                  Szczegóły
+                </Link>
                 {isOwner && route.source === 'community' && (
                   <button
                     type="button"
@@ -213,6 +225,9 @@ export function RoutesListPage() {
                   >
                     Usuń
                   </button>
+                )}
+                {!isOwner && route.source === 'community' && (
+                  <ReportButton targetType="route" targetId={route.id} targetLabel={route.title} />
                 )}
               </div>
             </article>

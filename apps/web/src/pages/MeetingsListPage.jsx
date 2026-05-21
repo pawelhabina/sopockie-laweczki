@@ -33,6 +33,8 @@ export function MeetingsListPage() {
     isLoggedIn,
     visibleMeetings,
     visibleBenches,
+    followedBenches,
+    meetingNotifications,
     joinMeeting,
     leaveMeeting,
     deleteMeeting,
@@ -125,6 +127,9 @@ export function MeetingsListPage() {
             <h1 className="mt-3 font-heading text-3xl leading-tight">Lista spotkań</h1>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
               Spotkania pokazują przybliżony kontekst ławki i anonimową listę uczestników.
+            </p>
+            <p className="mt-2 text-xs font-semibold text-[var(--text-muted)]">
+              Obserwujesz {followedBenches.length} ławek. Powiadomienia: {meetingNotifications.length}.
             </p>
           </div>
 

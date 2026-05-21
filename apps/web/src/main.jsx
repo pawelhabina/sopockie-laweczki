@@ -7,19 +7,22 @@ import 'leaflet/dist/leaflet.css';
 import { UiPrefsProvider } from './context/UiPrefsContext';
 import { BenchesProvider } from './context/BenchesContext';
 import { AuthProvider } from './context/AuthContext';
+import { ReportsProvider } from './context/ReportsContext';
 import { RoutesProvider } from './context/RoutesContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <UiPrefsProvider>
       <AuthProvider>
-        <BenchesProvider>
-          <RoutesProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </RoutesProvider>
-        </BenchesProvider>
+        <ReportsProvider>
+          <BenchesProvider>
+            <RoutesProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </RoutesProvider>
+          </BenchesProvider>
+        </ReportsProvider>
       </AuthProvider>
     </UiPrefsProvider>
   </React.StrictMode>,

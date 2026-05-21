@@ -11,6 +11,7 @@ import { BenchAddPage } from './pages/BenchAddPage';
 import { MeetingCreatePage } from './pages/MeetingCreatePage';
 import { MeetingsListPage } from './pages/MeetingsListPage';
 import { RouteAddPage } from './pages/RouteAddPage';
+import { RouteDetailsPage } from './pages/RouteDetailsPage';
 import { RoutesMapPage } from './pages/RoutesMapPage';
 import { RoutesListPage } from './pages/RoutesListPage';
 import { SosPage } from './pages/SosPage';
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/routes" element={<RoutesMapPage />} />
         <Route path="/routes/list" element={<RoutesListPage />} />
+        <Route path="/routes/details" element={<RouteDetailsPage />} />
         <Route path="/routes/official" element={<Navigate to="/routes/list?segment=official" replace />} />
         <Route path="/routes/community" element={<Navigate to="/routes/list?segment=community" replace />} />
         <Route path="/routes/add" element={<RouteAddPage />} />

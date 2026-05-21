@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faFilter, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
+import { ReportButton } from '@/components/ReportButton';
 import { benchTypeMeta, statusMeta } from '@/data/benches';
 import { useBenches } from '@/context/BenchesContext';
 
@@ -178,6 +179,11 @@ export function BenchesListPage() {
               >
                 Otwórz na mapie
               </Link>
+              {isLoggedIn && (
+                <div className="mt-3">
+                  <ReportButton targetType="bench" targetId={bench.id} targetLabel={bench.name} />
+                </div>
+              )}
             </article>
           );
         })}

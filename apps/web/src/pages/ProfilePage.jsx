@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useUiPrefs } from '@/context/UiPrefsContext';
 import { useAuth } from '@/context/AuthContext';
+import { useBenches } from '@/context/BenchesContext';
+import { useReports } from '@/context/ReportsContext';
 import { useRoutes } from '@/context/RoutesContext';
 
 export function ProfilePage() {
   const { fontScale, highContrast, setFontScale, setHighContrast } = useUiPrefs();
   const { isLoggedIn, currentUser, login, logout, updateProfileName } = useAuth();
-  const { myRoutes } = useRoutes();
+  const { favoriteBenches, followedBenches, meetingNotifications, visibleMeetings } = useBenches();
+  const { myReports } = useReports();
+  const { myRoutes, favoriteRoutes } = useRoutes();
   const [activeTab, setActiveTab] = useState('account');
   const [displayName, setDisplayName] = useState(currentUser.name === 'Gość' ? 'Mieszkaniec Sopotu' : currentUser.name);
 
@@ -109,7 +114,76 @@ export function ProfilePage() {
                 <p className="text-xs font-extrabold uppercase tracking-wide text-[var(--text-muted)]">Moje trasy</p>
                 <p className="mt-2 font-heading text-2xl">{myRoutes.length}</p>
               </div>
+              <div className="rounded-2xl border border-[var(--outline-soft)] bg-white p-4">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-[var(--text-muted)]">Ulubione ławki</p>
+                <p className="mt-2 font-heading text-2xl">{favoriteBenches.length}</p>
+              </div>
+              <div className="rounded-2xl border border-[var(--outline-soft)] bg-white p-4">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-[var(--text-muted)]">Ulubione trasy</p>
+                <p className="mt-2 font-heading text-2xl">{favoriteRoutes.length}</p>
+              </div>
             </div>
+
+            {isLoggedIn && (
+              <div className="mt-4 grid gap-3">
+                <div className="rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-4">
+                  <p className="text-sm font-bold">Moje spotkania</p>
+                  <div className="mt-2 grid gap-2">
+                    {visibleMeetings
+                      .filter((meeting) => meeting.participants.includes(currentUser.id))
+                      .slice(0, 3)
+                      .map((meeting) => (
+                        <Link
+                          key={meeting.id}
+                          to={`/meetings`}
+                          className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-sm font-semibold text-[var(--text-muted)]"
+                        >
+                          {meeting.title}
+                        </Link>
+                      ))}
+                    {visibleMeetings.filter((meeting) => meeting.participants.includes(currentUser.id)).length === 0 && (
+                      <p className="text-sm text-[var(--text-muted)]">Nie uczestniczysz jeszcze w spotkaniach.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-4">
+                  <p className="text-sm font-bold">Obserwowane ławki i powiadomienia</p>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">
+                    Obserwowane: {followedBenches.length}. Nowe powiadomienia: {meetingNotifications.length}.
+                  </p>
+                  <div className="mt-2 grid gap-2">
+                    {meetingNotifications.slice(0, 3).map((notification) => (
+                      <Link
+                        key={notification.id}
+                        to={`/benches?benchId=${notification.benchId}`}
+                        className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-sm font-semibold text-[var(--text-muted)]"
+                      >
+                        {notification.message}
+                      </Link>
+                    ))}
+                    {meetingNotifications.length === 0 && (
+                      <p className="text-sm text-[var(--text-muted)]">Brak nowych powiadomień.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[var(--outline-soft)] bg-[#f8fbfa] p-4">
+                  <p className="text-sm font-bold">Moje zgłoszenia</p>
+                  <div className="mt-2 grid gap-2">
+                    {myReports.slice(0, 3).map((report) => (
+                      <div key={report.id} className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 text-sm">
+                        <p className="font-bold">{report.targetLabel}</p>
+                        <p className="text-xs text-[var(--text-muted)]">Status: przyjęte</p>
+                      </div>
+                    ))}
+                    {myReports.length === 0 && (
+                      <p className="text-sm text-[var(--text-muted)]">Nie masz jeszcze zgłoszeń.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

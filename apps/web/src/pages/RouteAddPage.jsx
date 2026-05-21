@@ -14,6 +14,7 @@ const defaultForm = {
   startPlace: 'Sopot',
   summary: '',
   highlights: '',
+  visibility: 'public',
 };
 
 export function RouteAddPage() {
@@ -252,6 +253,18 @@ export function RouteAddPage() {
               placeholder="Np. Molo w Sopocie"
               className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 font-semibold text-[var(--text-main)] outline-none"
             />
+          </label>
+
+          <label className="grid gap-2 text-sm font-bold">
+            Widoczność
+            <select
+              value={form.visibility}
+              onChange={onChange('visibility')}
+              className="rounded-xl border border-[var(--outline-soft)] bg-white px-3 py-2 font-semibold text-[var(--text-main)] outline-none"
+            >
+              <option value="public">Publiczna</option>
+              <option value="private">Prywatna</option>
+            </select>
           </label>
         </div>
 

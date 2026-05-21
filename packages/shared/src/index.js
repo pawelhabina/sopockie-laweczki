@@ -1,5 +1,6 @@
 export * from './context/AuthContext.jsx';
 export * from './context/BenchesContext.jsx';
+export * from './context/ReportsContext.jsx';
 export * from './context/RoutesContext.jsx';
 export * from './context/UiPrefsContext.jsx';
 export * from './data/benches.js';

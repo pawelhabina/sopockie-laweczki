@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faListUl, faLocationDot, faStar, faTrashCan, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBell, faListUl, faLocationDot, faStar, faTrashCan, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { ReportButton } from '@/components/ReportButton';
 import { benchTypeMeta, statusMeta } from '@/data/benches';
 import { useBenches } from '@/context/BenchesContext';
 
@@ -20,9 +21,11 @@ export function BenchDetailsPage() {
     visibleBenches,
     isLoggedIn,
     toggleFavorite,
+    toggleFollowBench,
     getMeeting,
     getStatus,
     isFavorite,
+    isBenchFollowed,
     isParticipant,
     isOwner,
     createMeeting,
@@ -173,6 +176,19 @@ export function BenchDetailsPage() {
 
         {isLoggedIn && (
           <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => toggleFollowBench(selectedBench.id)}
+              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold ${
+                isBenchFollowed(selectedBench.id)
+                  ? 'border-[#1f9d55]/35 bg-[#e8f8ef] text-[#0b5d33]'
+                  : 'border-[var(--outline-soft)] bg-white text-[var(--text-muted)]'
+              }`}
+            >
+              <FontAwesomeIcon icon={faBell} />
+              {isBenchFollowed(selectedBench.id) ? 'Obserwowana' : 'Obserwuj'}
+            </button>
+
             {!selectedMeeting && (
               <button type="button" onClick={() => createMeeting(selectedBench.id)} className="cta-btn rounded-xl px-4 py-2 text-sm font-bold">
                 Utwórz spotkanie
@@ -215,6 +231,8 @@ export function BenchDetailsPage() {
                 Usuń spotkanie
               </button>
             )}
+
+            <ReportButton targetType="bench" targetId={selectedBench.id} targetLabel={selectedBench.name} />
           </div>
         )}
       </article>

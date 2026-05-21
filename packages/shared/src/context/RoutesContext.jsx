@@ -99,6 +99,7 @@ function ensureRoute(candidate, fallbackRoute = null) {
     authorId: ensureString(candidate.authorId, fallbackRoute?.authorId ?? defaultAuthorId),
     authorName: ensureString(candidate.authorName, fallbackRoute?.authorName ?? defaultAuthorName),
     createdAt: ensureString(candidate.createdAt, fallbackRoute?.createdAt ?? new Date().toISOString()),
+    visibility: source === 'official' ? 'public' : candidate.visibility === 'private' ? 'private' : fallbackRoute?.visibility ?? 'public',
     path,
   };
 }
@@ -152,13 +153,18 @@ export function RoutesProvider({ children }) {
   }, [favorites]);
 
   const value = useMemo(() => {
+    const visibleCommunityRoutes = communityRoutes.filter((route) => {
+      return route.visibility !== 'private' || route.authorId === currentUser.id;
+    });
+    const visibleRoutes = [...officialRoutes, ...visibleCommunityRoutes];
     const myRoutes = communityRoutes.filter((route) => route.authorId === currentUser.id);
-    const favoriteRoutes = allRoutes.filter((route) => favorites.includes(route.id));
+    const favoriteRoutes = visibleRoutes.filter((route) => favorites.includes(route.id));
 
     return {
       officialRoutes,
       communityRoutes,
       allRoutes,
+      visibleRoutes,
       myRoutes,
       favorites,
       favoriteRoutes,
@@ -191,6 +197,7 @@ export function RoutesProvider({ children }) {
             authorId: currentUser.id,
             authorName: currentUser.name,
             createdAt: new Date().toISOString(),
+            visibility: payload.visibility,
           },
           null,
         );
