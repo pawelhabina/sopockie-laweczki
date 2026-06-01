@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <ReportsProvider>
           <BenchesProvider>
             <RoutesProvider>
-              <BrowserRouter>
+              <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
                 <App />
               </BrowserRouter>
             </RoutesProvider>

@@ -4,20 +4,22 @@ import { faPlus, faRotateLeft, faTrashCan } from '@fortawesome/free-solid-svg-ic
 import { statusMeta } from '@shared/data/benches.js';
 import { useBenches } from '@shared/context/BenchesContext.jsx';
 
-const emptyBenchForm = {
-  id: '',
-  name: '',
-  address: '',
-  lat: '54.4418',
-  lng: '18.5603',
-  capacity: '4',
-  description: '',
-  photosText: '',
-};
+function createEmptyBenchForm() {
+  return {
+    id: '',
+    name: '',
+    address: '',
+    lat: '54.4418',
+    lng: '18.5603',
+    capacity: '4',
+    description: '',
+    photosText: '',
+  };
+}
 
 function mapBenchToForm(bench) {
   if (!bench) {
-    return emptyBenchForm;
+    return createEmptyBenchForm();
   }
 
   return {
@@ -46,11 +48,6 @@ export function BenchesAdminPage() {
   }, [benches, selectedBenchId]);
 
   useEffect(() => {
-    if (!selectedBenchId && benches[0]) {
-      setSelectedBenchId(benches[0].id);
-      return;
-    }
-
     if (selectedBenchId && !benches.some((bench) => bench.id === selectedBenchId)) {
       setSelectedBenchId(benches[0]?.id ?? '');
     }
@@ -69,7 +66,7 @@ export function BenchesAdminPage() {
 
   const handleNew = () => {
     setSelectedBenchId('');
-    setForm(emptyBenchForm);
+    setForm(createEmptyBenchForm());
   };
 
   const handleSave = () => {
@@ -102,7 +99,7 @@ export function BenchesAdminPage() {
           </div>
           <button type="button" onClick={handleNew} className="admin-btn admin-btn-primary">
             <FontAwesomeIcon icon={faPlus} />
-            Nowa ławka
+            Dodaj ławkę
           </button>
         </div>
 
@@ -207,7 +204,7 @@ export function BenchesAdminPage() {
 
             <button type="button" onClick={handleNew} className="admin-btn admin-btn-secondary">
               <FontAwesomeIcon icon={faPlus} />
-              Wyczyść formularz
+              Nowa ławka
             </button>
 
             {selectedBench && (

@@ -4,20 +4,22 @@ import { faPlus, faRotateLeft, faTrashCan } from '@fortawesome/free-solid-svg-ic
 import { routeCategories, routeSourceMeta } from '@shared/data/routes.js';
 import { useRoutes } from '@shared/context/RoutesContext.jsx';
 
-const emptyRouteForm = {
-  id: '',
-  source: 'community',
-  title: '',
-  category: 'piesza',
-  difficulty: 'lekka',
-  startPlace: 'Sopot',
-  summary: '',
-  highlightsText: '',
-  authorId: '',
-  authorName: '',
-  createdAt: new Date().toISOString(),
-  pathText: '',
-};
+function createEmptyRouteForm() {
+  return {
+    id: '',
+    source: 'community',
+    title: '',
+    category: 'piesza',
+    difficulty: 'lekka',
+    startPlace: 'Sopot',
+    summary: '',
+    highlightsText: '',
+    authorId: '',
+    authorName: '',
+    createdAt: new Date().toISOString(),
+    pathText: '',
+  };
+}
 
 function formatPath(path) {
   return Array.isArray(path) ? path.map(([lat, lng]) => `${lat}, ${lng}`).join('\n') : '';
@@ -33,7 +35,7 @@ function parsePath(pathText) {
 
 function mapRouteToForm(route) {
   if (!route) {
-    return emptyRouteForm;
+    return createEmptyRouteForm();
   }
 
   return {
@@ -66,11 +68,6 @@ export function RoutesAdminPage() {
   }, [allRoutes, selectedRouteId]);
 
   useEffect(() => {
-    if (!selectedRouteId && allRoutes[0]) {
-      setSelectedRouteId(allRoutes[0].id);
-      return;
-    }
-
     if (selectedRouteId && !allRoutes.some((route) => route.id === selectedRouteId)) {
       setSelectedRouteId(allRoutes[0]?.id ?? '');
     }
@@ -113,7 +110,7 @@ export function RoutesAdminPage() {
 
   const handleNew = () => {
     setSelectedRouteId('');
-    setForm(emptyRouteForm);
+    setForm(createEmptyRouteForm());
   };
 
   return (
@@ -126,7 +123,7 @@ export function RoutesAdminPage() {
           </div>
           <button type="button" onClick={handleNew} className="admin-btn admin-btn-primary">
             <FontAwesomeIcon icon={faPlus} />
-            Nowa trasa
+            Dodaj trasę
           </button>
         </div>
 
@@ -254,7 +251,7 @@ export function RoutesAdminPage() {
 
             <button type="button" onClick={handleNew} className="admin-btn admin-btn-secondary">
               <FontAwesomeIcon icon={faPlus} />
-              Wyczyść formularz
+              Nowa trasa
             </button>
 
             {selectedRoute && (

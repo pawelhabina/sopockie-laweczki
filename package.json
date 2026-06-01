@@ -9,8 +9,10 @@
   "scripts": {
     "dev": "npm run dev -w apps/web",
     "dev:admin": "npm run dev -w apps/web-admin",
+    "dev:api": "npm run dev -w apps/api",
     "build": "npm run build -w apps/web",
     "build:admin": "npm run build -w apps/web-admin",
+    "test:api": "npm run test -w apps/api",
     "preview": "npm run preview -w apps/web",
     "preview:admin": "npm run preview -w apps/web-admin"
   },

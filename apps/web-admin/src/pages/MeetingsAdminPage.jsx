@@ -32,7 +32,7 @@ function mapMeetingToForm(meeting, defaultBenchId) {
 export function MeetingsAdminPage() {
   const { benches, meetingsByBench, saveMeeting, removeMeeting } = useBenches();
   const meetings = useMemo(() => Object.values(meetingsByBench), [meetingsByBench]);
-  const [selectedBenchId, setSelectedBenchId] = useState(() => meetings[0]?.benchId ?? benches[0]?.id ?? '');
+  const [selectedBenchId, setSelectedBenchId] = useState(() => meetings[0]?.benchId ?? '');
   const [form, setForm] = useState(() => mapMeetingToForm(meetings[0] ?? null, benches[0]?.id ?? ''));
 
   const selectedMeeting = useMemo(() => {
@@ -40,11 +40,9 @@ export function MeetingsAdminPage() {
   }, [meetingsByBench, selectedBenchId]);
 
   useEffect(() => {
-    if (selectedBenchId && benches.some((bench) => bench.id === selectedBenchId)) {
-      return;
+    if (selectedBenchId && !benches.some((bench) => bench.id === selectedBenchId)) {
+      setSelectedBenchId(meetings[0]?.benchId ?? '');
     }
-
-    setSelectedBenchId(meetings[0]?.benchId ?? benches[0]?.id ?? '');
   }, [benches, meetings, selectedBenchId]);
 
   useEffect(() => {
@@ -91,7 +89,7 @@ export function MeetingsAdminPage() {
           </div>
           <button type="button" onClick={handleNew} className="admin-btn admin-btn-primary">
             <FontAwesomeIcon icon={faPlus} />
-            Nowe spotkanie
+            Dodaj spotkanie
           </button>
         </div>
 
@@ -176,7 +174,7 @@ export function MeetingsAdminPage() {
             </button>
             <button type="button" onClick={handleNew} className="admin-btn admin-btn-secondary">
               <FontAwesomeIcon icon={faPlus} />
-              Wyczyść formularz
+              Nowe spotkanie
             </button>
             {selectedMeeting && (
               <button
